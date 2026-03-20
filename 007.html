@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心靈邊界 | 心理學探索歷程</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-soft: #fcfaff;
+            --main-purple: #6D59FF; 
+            --deep-purple: #240046; 
+            --accent-pink: #FF006E; 
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(109, 89, 255, 0.2);
+            --reflection-bg: rgba(109, 89, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'PingFang TC', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-soft); color: var(--deep-purple); scroll-behavior: smooth; overflow-x: hidden; line-height: 1.8; }
+
+        /* 滾動進度條 */
+        #progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 5px; z-index: 2000; }
+        #progress-bar { height: 100%; background: linear-gradient(to right, var(--main-purple), var(--accent-pink)); width: 0%; }
+
+        /* 背景流體 */
+        .blob-bg { 
+            position: fixed; width: 100vw; height: 100vh; z-index: -2; 
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(109, 89, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(255, 0, 110, 0.1) 0%, transparent 40%);
+        }
+
+        /* 浮動動畫 */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .floating-icon {
+            font-size: 3rem;
+            color: var(--main-purple);
+            margin-bottom: 20px;
+            animation: float 4s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        /* 導覽列 */
+        nav { 
+            padding: 1rem 8%; display: flex; justify-content: space-between; align-items: center; 
+            position: fixed; width: 100%; top: 5px; z-index: 1000; 
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border);
+        }
+        .logo { font-weight: 900; color: var(--deep-purple); letter-spacing: 2px; }
+        .nav-links a { text-decoration: none; color: var(--deep-purple); margin-left: 25px; font-size: 0.9rem; font-weight: 600; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent-pink); }
+
+        header { 
+            height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            background: linear-gradient(135deg, var(--deep-purple), var(--main-purple)); color: white;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+        }
+        header h1 { font-size: 3.5rem; letter-spacing: 8px; margin-bottom: 15px; }
+
+        section { padding: 100px 12%; text-align: center; }
+        
+        /* 卡片設計 */
+        .glass-card { 
+            background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); 
+            border-radius: 30px; padding: 50px; box-shadow: 0 15px 35px rgba(36, 0, 70, 0.08);
+            text-align: left;
+        }
+
+        .reflection-box {
+            margin-top: 25px; padding: 20px; background: var(--reflection-bg);
+            border-left: 4px solid var(--main-purple); border-radius: 8px; font-style: italic; font-size: 0.95rem;
+        }
+
+        h2 { font-size: 2rem; margin-bottom: 30px; color: var(--deep-purple); display: flex; align-items: center; }
+
+        .photo-box { 
+            width: 100%; height: 350px; background: #fff; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; 
+            border: 1px solid #eee; color: #aaa; margin-top: 30px; font-weight: bold;
+        }
+
+        /* 網格系統 */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        
+        /* 語言檢定 */
+        .lang-card { 
+            background: white; padding: 40px; border-radius: 30px; text-align: center; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03); border-bottom: 4px solid var(--main-purple);
+        }
+        .lang-val { font-size: 3.5rem; font-weight: 900; color: var(--main-purple); }
+
+        /* 學術深耕區塊小卡 */
+        .res-inner-card { 
+            background: white; padding: 30px; border-radius: 20px; 
+            border-left: 5px solid var(--main-purple); transition: 0.3s;
+        }
+        .res-inner-card:hover { transform: translateX(10px); background: #fffceb; }
+
+        /* Stroop Effect 互動 */
+        .stroop-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin: 40px 0; }
+        .stroop-text { font-size: 2.8rem; font-weight: 900; cursor: default; transition: transform 0.3s; }
+        .stroop-text:hover { transform: scale(1.2); }
+
+        .future-card {
+            background: linear-gradient(135deg, var(--deep-purple) 0%, #5a189a 100%);
+            color: white; border: none; text-align: center;
+        }
+
+        footer { padding: 80px; text-align: center; opacity: 0.6; }
+
+        @media (max-width: 900px) { 
+            section { padding: 60px 5%; } 
+            .grid-2 { grid-template-columns: 1fr; gap: 20px; } 
+            header h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="progress-container"><div id="progress-bar"></div></div>
+    
+    <div class="blob-bg"></div>
+
+    <nav>
+        <div class="logo">PSYCH.EXPLORER</div>
+        <div class="nav-links">
+            <a href="#about">自傳</a>
+            <a href="#canada">跨文化</a>
+            <a href="#research">學術</a>
+            <a href="#lab">實驗室</a>
+            <a href="#future">願景</a>
+        </div>
+    </nav>
+
+    <header>
+        <i class="fa-solid fa-brain floating-icon" style="color: #fff; font-size: 4rem;"></i>
+        <h1>解構與重建</h1>
+        <p>一個心理學者的自我覺察與成長實驗</p>
+    </header>
+
+    <section id="about">
+        <div class="glass-card">
+            <i class="fa-solid fa-fingerprint floating-icon"></i>
+            <h2>探索者簡介</h2>
+            <p>我是小明。對我而言，心理學不僅是觀察他人的學問，更是「後設認知」的修煉。我致力於透過數據分析與感性共情的結合，探索人類行為背後的深層邏輯。</p>
+            <div class="photo-box">[ 個人形象照片 ]</div>
+        </div>
+    </section>
+
+    <section id="canada">
+        <div class="glass-card">
+            <i class="fa-solid fa-earth-americas floating-icon" style="color: #4CC9F0;"></i>
+            <h2>UBC 遊學：群體動力與文化適應</h2>
+            <p>在 UBC 的短期學術生活中，我不僅精進語言，更深入觀察了不同文化背景下的「群體壓力」與「社交邊界」。這是一場關於全球公民身份認知的實地考察。</p>
+            <div class="reflection-box">
+                <strong>心理反思：</strong> 我觀察到不同文化對「個人空間」的需求差異，這觸發了我對環境心理學的興趣。
+            </div>
+            <div class="photo-box">[ UBC 校園實照 ]</div>
+        </div>
+    </section>
+
+    <section id="english">
+        <i class="fa-solid fa-language floating-icon" style="color: var(--accent-pink);"></i>
+        <h2 style="justify-content: center; margin-bottom: 40px;">學術工具：語言檢定</h2>
+        <div class="grid-2">
+            <div class="lang-card">
+                <i class="fa-solid fa-medal" style="color: gold; font-size: 2rem;"></i>
+                <span class="lang-val">885</span>
+                <p>TOEIC 金色證書</p>
+            </div>
+            <div class="lang-card">
+                <i class="fa-solid fa-book-open" style="color: var(--main-purple); font-size: 2rem;"></i>
+                <span class="lang-val" style="color: var(--accent-pink);">105</span>
+                <p>TOEFL iBT 學術卓越</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="research">
+        <div class="glass-card">
+            <i class="fa-solid fa-microscope floating-icon" style="color: #00DBDE;"></i>
+            <h2>學術深耕：理論與視角</h2>
+            <div class="grid-2">
+                <div class="res-inner-card">
+                    <h3 style="font-size: 1.2rem; color: var(--main-purple); margin-bottom:15px;"><i class="fa-solid fa-book"></i> 核心閱讀</h3>
+                    <p style="font-size: 0.95rem;">《快思慢想》：深入探討人類決策的系統一與系統二，啟發我對「認知偏誤」的興趣。</p>
+                </div>
+                <div class="res-inner-card" style="border-left-color: var(--accent-pink);">
+                    <h3 style="font-size: 1.2rem; color: var(--accent-pink); margin-bottom:15px;"><i class="fa-solid fa-chart-line"></i> 數據技能</h3>
+                    <p style="font-size: 0.95rem;">初步掌握 Python 數據分析，嘗試將實驗數據視覺化，尋找行為背後的常態分佈。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="lab">
+        <div class="glass-card" style="text-align: center; border: 2px solid var(--accent-pink); background: rgba(255, 255, 255, 0.95);">
+            <i class="fa-solid fa-flask floating-icon" style="color: var(--accent-pink);"></i>
+            <h2 style="justify-content: center;">微型實驗室：Stroop Effect</h2>
+            <p style="margin-bottom: 30px; color: #555;">心理學挑戰：請快速說出下方文字的<b>「顏色」</b>，而非字面意義。</p>
+            <div class="stroop-container">
+                <span class="stroop-text" style="color: #FF006E;">綠色</span>
+                <span class="stroop-text" style="color: #6D59FF;">紅色</span>
+                <span class="stroop-text" style="color: #FFBE0B;">藍色</span>
+                <span class="stroop-text" style="color: #00DBDE;">黑色</span>
+            </div>
+            <div style="padding: 15px; background: var(--reflection-bg); border-radius: 10px; display: inline-block;">
+                <p style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-circle-info"></i> 這展示了「自動化加工」與「控制化加工」之間的認知干擾過程。</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="drama">
+        <div class="glass-card">
+            <i class="fa-solid fa-masks-theater floating-icon" style="color: #FFBE0B;"></i>
+            <h2>多元表現：英文話劇《心理的迴聲》</h2>
+            <p>透過詮釋角色，我實踐了心理諮商中的「投射」與「共情」技術。將抽象的創傷理論轉化為舞台上的情緒流動，是我對行為科學最感性的致敬。</p>
+            <div class="reflection-box">
+                <strong>場景應用：</strong> 運用呼吸調節法處理登台前的焦慮，驗證了生理心理學中的交感神經調節。
+            </div>
+            <div class="photo-box">[ 劇場劇照 ]</div>
+        </div>
+    </section>
+
+    <section id="future">
+        <div class="glass-card future-card">
+            <i class="fa-solid fa-compass floating-icon" style="color: white;"></i>
+            <h2 style="color: white; border: none; justify-content: center;">未來展望：心理科學的領航者</h2>
+            <p style="max-width: 800px; margin: 0 auto; font-size: 1.1rem;">
+                未來，我期許能在臨床心理與人工智慧間搭建橋樑。利用數據追蹤心理健康趨勢，同時保有最溫暖的人本關懷。
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 學習歷程檔案 | 向內覺察，向外鏈結</p>
+    </footer>
+
+    <script>
+        // 1. 滾動進度條邏輯
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        };
+
+        // 2. 出現動畫 (Intersection Observer)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { 
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                } 
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(el => {
+            el.style.opacity = "0";
+            el.style.transform = "translateY(30px)";
+            el.style.transition = "all 0.8s ease-out";
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
